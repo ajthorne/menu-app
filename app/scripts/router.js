@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import Backbone from 'backbone';
 import renderMenuItems from './templates/menu';
+import renderOrder from './templates/order';
 import itemCollection from './collections/itemcollection';
 
 const Router = Backbone.Router.extend({
@@ -14,14 +15,11 @@ const Router = Backbone.Router.extend({
 
   renderBeer: function() {
     renderMenuItems('Beer');
-    //
-    // if (location.hash === 'beer') {
-    //   $('h3').set('Beer');
-    // }
   },
 
   renderEntrees: function() {
     renderMenuItems('entrees');
+
   },
 
   renderGames: function() {

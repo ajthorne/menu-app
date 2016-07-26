@@ -2,30 +2,30 @@ import $ from 'jquery';
 import Backbone from 'backbone';
 import orderCollection from '../collections/ordercollection';
 import order1 from '../models/ordermodel';
+import renderConfirmation from './confirmation';
 
-// function renderOrder (id) {
+function renderOrder (item) {
   // console.log(item);
   let orderList = $(`
     <h2>Your Order</h2>
     <ol class="order-list">
-      <li class="order-item"></li>
     </ol>
-    <p>Tax: $0</p>
-    <p>Total: $0</p>
-    <input type="button" name="name" value="Order now!">
+    <p>Tax: $${order1.get('tax').toFixed(2)}</p>
+    <p>Total: $${order1.get('total').toFixed(2)}</p>
+    <input class="orderBtn" type="button" name="name" value="Order now!">
     `);
 
-    // $('aside').append(orderList);
+    order1.get('items').forEach(function(item, i, arr) {
+      // console.log(item);
+      let li = $(`<li class="order-item">${item.item}</li>`);
+      orderList.filter('ol').append(li);
+    });
 
-        // orderCollection.save({
-          // success: function(response) {
-            // console.log('posted to server!');
-            // router.navigate('confirmation', {trigger: true});
-          // },
-          // error: function () {
-            // console.log('failed adding order');
-          // }
-        // });
-    // });
-// }
-export default orderList;
+    orderList.filter('.orderBtn').on('click', function (item) {
+      console.log('Your order has been submitted!');
+      renderConfirmation(item);
+    });
+
+    return orderList;
+}
+export default renderOrder;

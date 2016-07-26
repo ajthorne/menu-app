@@ -3,7 +3,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import itemCollection from '../collections/itemcollection';
 import orderCollection from '../collections/ordercollection';
-import orderList from '../templates/order';
+import renderOrder from '../templates/order';
 import nav from '../templates/nav';
 import order1 from '../models/ordermodel';
 
@@ -15,9 +15,10 @@ function renderMenuItems(itemType) {
     <h3 class="itemType-title">${itemType}</h3>
     <ul class="menu-descriptions">
     </ul>
-  </section>
-  <aside>
-  </aside>`);
+    </section>
+    <aside>
+    </aside>`);
+
     $.ajax({
         url: 'https://tiy-austin-front-end-engineering.github.io/restaurantApi/pub.json',
         success: function(response) {
@@ -32,22 +33,37 @@ function renderMenuItems(itemType) {
                 //   let style = $(`<li>${item.style}</li>`);
                 //   menuItem.append(style);
                 // }
+                // let itemBtn = menuItem.filter('.addItem');
+                // itemBtn[0].addEventListener('click', function(e) {
+                //     console.log(item.item);
+                //     console.log(item.price);
+                // });
                 $('.container').empty().append(nav).append(menuList);
                 $('.menu-descriptions').append(menuItem);
-                $('aside').append(orderList);
+                $('aside').html(renderOrder(item));
                 itemCollection.add(item);
+
             });
-            
+
             $('.addItem').on('click', function() {
                 let id = $(this).data('id');
-                console.log(id);
-              //I need to grab the data that I clicked on title and price and add it to the order box
-              //use id to grab it
-              //run renderOrder function?
-              // renderOrder(id);
+                let item = itemCollection.get(id);
+                order1.set('items', order1.get('items').concat(item));
+                //adding item to items array in model
+                order1.total(item);
+                order1.tax(item);
+                order1.calculate(item);
+                //math functions are defined in model
+                order1.save();
+                //saving order to server
+                order1.on('change', function() {
+                    $('aside').html(renderOrder(item));
+                    //watching for change on order1
+                    //if there is a change, it rerenders the list
+                });
             });
-      }
-});
+        }
+    });
 }
 
 export default renderMenuItems;
